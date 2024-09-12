@@ -1,0 +1,25 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/cv/ros2_ws/install/robotino-serial/include/**",
+        "/home/cv/ros2_ws/install/expansion-hub-driver/include/**",
+        "/opt/ros/humble/include/**",
+        "/home/cv/ros2_ws/src/expansion-hub-driver/include/**",
+        "/home/cv/ros2_ws/src/neo_robotino_sim/include/**",
+        "/home/cv/ros2_ws/src/robotino-serial/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}

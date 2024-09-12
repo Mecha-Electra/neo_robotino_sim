@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="omni_wheel" params="suffix radius height mass *joint_pose *joint_parent">
+    <xacro:property name="PI" value="3.1415926535897931" />
+    <link name="omni_${suffix}_link">
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <cylinder radius="${radius}" length="${height}" />
+        </geometry>
+      </collision>
+
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <cylinder radius="${radius}" length="${height}" />
+        </geometry>
+        <material name="white">
+          <color rgba="1 0.8 0.8 1" />
+        </material>
+      </visual>
+
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <mass value="${mass}" />
+        <inertia
+          ixx="${mass*(3*(radius**2)+(height**2))/12}" ixy="0.0" ixz="0.0"
+          iyy="${mass*(3*(radius**2)+(height**2))/12}" iyz="0.0"
+          izz="${mass*(radius**2)/2}" />
+      </inertial>
+    </link>
+
+    <!-- 
+    esta parte faz o atrito da roda omni ser de apenas uma direção
+    fonte: https://github.com/ERC-BPGC/omnibase/blob/master/omnibase_description/xacro/wheel.urdf.xacro
+    -->
+    <gazebo reference="omni_${suffix}_link">
+      <mu1 value="1" />
+      <mu2 value="0.1" />
+      <kp value="10000000.0" />
+      <kd value="10000.0" />
+      <fdir1 value="0 0 1" />
+      <maxContacts value="1" />
+    </gazebo>
+
+    <!-- precisa de parent e origin -->
+    <joint name="omni_${suffix}_joint" type="revolute">
+      <xacro:insert_block name="joint_pose" />
+      <xacro:insert_block name="joint_parent" />
+      <child link="omni_${suffix}_link" />
+      <axis xyz="0 0 1" rpy="0 0 0" />
+      <limit effort="30" velocity="3.0" lower="${-3.4028235e+38}" upper="${3.4028235e+38}" />
+    </joint>
+
+    <gazebo>
+      <plugin
+        filename="gz-sim-joint-controller-system"
+        name="gz::sim::systems::JointController">
+        <joint_name>omni_${suffix}_joint</joint_name>
+        <initial_velocity>0</initial_velocity>
+      </plugin>
+    </gazebo>
+
+
+  </xacro:macro>
+</robot>
