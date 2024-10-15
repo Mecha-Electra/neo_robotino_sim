@@ -36,8 +36,8 @@
     fonte: https://github.com/ERC-BPGC/omnibase/blob/master/omnibase_description/xacro/wheel.urdf.xacro
     -->
     <gazebo reference="omni_${suffix}_link">
-      <mu1 value="1" />
-      <mu2 value="0.1" />
+      <mu1 value="0.01" />
+      <mu2 value="10" />
       <kp value="10000000.0" />
       <kd value="10000.0" />
       <fdir1 value="0 0 1" />
@@ -45,23 +45,13 @@
     </gazebo>
 
     <!-- precisa de parent e origin -->
-    <joint name="omni_${suffix}_joint" type="revolute">
+    <joint name="omni_${suffix}_joint" type="continuous">
       <xacro:insert_block name="joint_pose" />
       <xacro:insert_block name="joint_parent" />
       <child link="omni_${suffix}_link" />
       <axis xyz="0 0 1" rpy="0 0 0" />
-      <limit effort="30" velocity="3.0" lower="${-3.4028235e+38}" upper="${3.4028235e+38}" />
+      <limit effort="30" velocity="3.0" />
     </joint>
-
-    <gazebo>
-      <plugin
-        filename="gz-sim-joint-controller-system"
-        name="gz::sim::systems::JointController">
-        <joint_name>omni_${suffix}_joint</joint_name>
-        <initial_velocity>0</initial_velocity>
-      </plugin>
-    </gazebo>
-
-
+    
   </xacro:macro>
 </robot>

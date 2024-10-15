@@ -17,8 +17,8 @@ import os
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument
-from launch.actions import IncludeLaunchDescription
+from launch.actions import IncludeLaunchDescription, RegisterEventHandler, DeclareLaunchArgument, ExecuteProcess
+from launch.event_handlers import OnProcessExit
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, Command
@@ -53,8 +53,13 @@ def generate_launch_description():
         condition=IfCondition(LaunchConfiguration('rviz'))
     )
 
+    # Robot description urdf parsing
+    #using the command to avoid relative path errors
     robot_desc = Command(['xacro ', os.path.join(pkg_neo_robotino_sim, 'urdf', 'robotino_base.urdf.xacro')])
+
+    # Robot state publisher
     robot_state_publisher_parameters=[
+        #this following line is for loading without misinterpreting values as another file
         {'robot_description': launch_ros.descriptions.ParameterValue(robot_desc, value_type=str)},
         {'use_sim_time': True}
         ]
@@ -73,16 +78,17 @@ def generate_launch_description():
         executable='parameter_bridge',
         # Topics to be connected (gazebo ros bridge)
         arguments=[
-            '/lidar@sensor_msgs/msg/LaserScan@gz.msgs.LaserScan/'
+            '/lidar@sensor_msgs/msg/LaserScan@ignition.msgs.LaserScan/'
         ],
         output='screen',
         # topics that should be remapped (from, to)
-        remappings=[
-            ('/camera', '/camera/image'),
-            ('/camera_info', '/camera/camera_info')
-        ],
+        #remappings=[
+        #    ('/camera', '/camera/image'),
+        #    ('/camera_info', '/camera/camera_info')
+        #],
     )
 
+    #robot spawning
     spawn = Node(package='ros_gz_sim', executable='create',
         arguments=[
         '-name', 'Robotino2',
@@ -93,12 +99,22 @@ def generate_launch_description():
         output='screen'
     )
 
+    #controle
+    load_joint_trajectory_controller = ExecuteProcess(
+        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active', 'velocity_controller'],
+        output='screen'
+    )
+
     return LaunchDescription([
         robot_state_publisher,
         gz_sim,
         DeclareLaunchArgument('rviz', default_value='true',
                               description='Open RViz.'),
-        spawn,
-        bridge,
-        rviz,
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=spawn,
+                on_exit=[rviz, load_joint_trajectory_controller, bridge],
+            )
+        ),
+        spawn
     ])
