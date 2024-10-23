@@ -36,7 +36,7 @@
     fonte: https://github.com/ERC-BPGC/omnibase/blob/master/omnibase_description/xacro/wheel.urdf.xacro
     -->
     <gazebo reference="omni_${suffix}_link">
-      <mu1 value="0.01" />
+      <mu1 value="0.2" />
       <mu2 value="10" />
       <kp value="10000000.0" />
       <kd value="10000.0" />
