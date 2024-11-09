@@ -48,7 +48,7 @@ def generate_launch_description():
         package='rviz2',
         executable='rviz2',
         arguments=[
-            # '-d', os.path.join(pkg_ros_gz_sim_demos, 'rviz', 'rgbd_camera_bridge.rviz')
+             '-d', os.path.join(pkg_neo_robotino_sim, 'rviz', 'robotino_only.rviz')
         ],
         condition=IfCondition(LaunchConfiguration('rviz'))
     )
@@ -76,16 +76,9 @@ def generate_launch_description():
     bridge = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
-        # Topics to be connected (gazebo ros bridge)
-        arguments=[
-            '/lidar@sensor_msgs/msg/LaserScan@ignition.msgs.LaserScan/'
-        ],
-        output='screen',
-        # topics that should be remapped (from, to)
-        #remappings=[
-        #    ('/camera', '/camera/image'),
-        #    ('/camera_info', '/camera/camera_info')
-        #],
+        arguments=['lidar@sensor_msgs/msg/LaserScan@gz.msgs.LaserScan',
+                   '/lidar/points@sensor_msgs/msg/PointCloud2@gz.msgs.PointCloudPacked'],
+        output='screen'
     )
 
     #robot spawning
