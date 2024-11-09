@@ -27,13 +27,10 @@
         </collision>
 
         <visual>
-            <origin xyz="0 0 0" rpy="0 0 0" />
+            <origin xyz="0 0 -0.02" rpy="0 0 0" />
             <geometry>
-                <cylinder radius="${radius}" length="${height}" />
+                <mesh filename="package://neo_robotino_sim/meshes/robotino_body.dae"/>
             </geometry>
-            <material name="white">
-                <color rgba="1 0.5 1 1" />
-            </material>
         </visual>
 
         <inertial>
@@ -82,21 +79,21 @@
     <joint name="structure_to_lidar" type="fixed">
         <parent link="structure_link" />
         <child link="lidar_link" />
-        <origin rpy="0 0 0" xyz="-0.1 -0.08 ${(height/2)+0.02}" />
+        <origin rpy="0 0 0" xyz="-0.06 -0.06 ${(height/2)+0.06}" />
     </joint>
 
     <xacro:omni_wheel suffix="back" radius="${wheel_radius}" height="${wheel_height}" mass="0.2">
-        <origin xyz="-0.13 0 ${(-height/2)+0.01}" rpy="${PI/2} 0 ${PI/2}" />
+        <origin xyz="-0.13 0 ${(-height/2)+(wheel_radius)-0.02}" rpy="${PI/2} 0 ${-PI/2}" />
         <parent link="structure_link" />
     </xacro:omni_wheel>
 
     <xacro:omni_wheel suffix="right" radius="${wheel_radius}" height="${wheel_height}" mass="0.2">
-        <origin xyz="0.065 -0.11 ${(-height/2)+0.01}" rpy="${PI/2} 0 ${PI+PI/3}" />
+        <origin xyz="0.065 -0.11 ${(-height/2)+(wheel_radius)-0.02}" rpy="${PI/2} 0 ${-PI/3 + PI/2}" />
         <parent link="structure_link" />
     </xacro:omni_wheel>
 
     <xacro:omni_wheel suffix="left" radius="${wheel_radius}" height="${wheel_height}" mass="0.2">
-        <origin xyz="0.065 0.11 ${(-height/2)+0.01}" rpy="${PI/2} 0 ${-PI/3}" />
+        <origin xyz="0.065 0.11 ${(-height/2)+(wheel_radius)-0.02}" rpy="${PI/2} 0 ${PI/3 + PI/2}" />
         <parent link="structure_link" />
     </xacro:omni_wheel>
 

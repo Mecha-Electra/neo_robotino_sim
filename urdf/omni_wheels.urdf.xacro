@@ -14,11 +14,8 @@
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0" />
         <geometry>
-          <cylinder radius="${radius}" length="${height}" />
-        </geometry>
-        <material name="white">
-          <color rgba="1 0.8 0.8 1" />
-        </material>
+          <mesh filename="package://neo_robotino_sim/meshes/omni_wheel.dae"/>
+      </geometry>
       </visual>
 
       <inertial>

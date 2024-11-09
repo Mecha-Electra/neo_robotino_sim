@@ -17,7 +17,7 @@ import os
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, RegisterEventHandler, DeclareLaunchArgument, ExecuteProcess
+from launch.actions import IncludeLaunchDescription, RegisterEventHandler, DeclareLaunchArgument, ExecuteProcess, SetEnvironmentVariable
 from launch.event_handlers import OnProcessExit
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
@@ -25,14 +25,14 @@ from launch.substitutions import LaunchConfiguration, Command
 import launch_ros.descriptions
 from launch_ros.actions import Node
 
-import xacro
-
 
 def generate_launch_description():
 
     # pkg_ros_gz_sim_demos = get_package_share_directory('ros_gz_sim_demos')
     pkg_neo_robotino_sim = get_package_share_directory('neo_robotino_sim')
     pkg_ros_gz_sim = get_package_share_directory('ros_gz_sim')
+
+    set_res_path = SetEnvironmentVariable('IGN_GAZEBO_RESOURCE_PATH', os.path.abspath(os.path.join(pkg_neo_robotino_sim, os.pardir))) #vai pelo pai de pkg_neo_robotino_sim
 
     gz_sim = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -99,6 +99,7 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
+        set_res_path,
         robot_state_publisher,
         gz_sim,
         DeclareLaunchArgument('rviz', default_value='true',
