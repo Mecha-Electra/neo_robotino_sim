@@ -54,7 +54,7 @@ void OmniDriveSystem::unprojectVelocity( float* vx, float* vy, float* omega, flo
 	//std::cout << m1 << " " << m2 << " " << m3 << std::endl;
 
 	//Convert from rad/s to m/s
-	const float k = 2.0 * M_PI * _layout.rw / 100;
+	const float k = _layout.rw;
 
 	*vx = k * ( m3 - m1 ) / sqrt( 3.0f );
 	*vy = k * 2.0f / 3.0f * ( m1 + 0.5f * ( m3 - m1 ) - m2 );
