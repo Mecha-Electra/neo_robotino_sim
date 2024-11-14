@@ -1,6 +1,6 @@
 controller_manager:
   ros__parameters:
-    update_rate: 1000  # Hz
+    update_rate: 100  # Hz
 
     velocity_controller:
       type: velocity_controllers/JointGroupVelocityController
@@ -12,6 +12,6 @@ controller_manager:
 velocity_controller:
   ros__parameters:
     joints:
-      - omni_back_joint
       - omni_left_joint
+      - omni_back_joint
       - omni_right_joint

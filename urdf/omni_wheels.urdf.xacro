@@ -12,7 +12,7 @@
       </collision>
 
       <visual>
-        <origin xyz="0 0 0" rpy="0 0 0" />
+        <origin xyz="0 0 0.005" rpy="0 0 0" />
         <geometry>
           <mesh filename="package://neo_robotino_sim/meshes/omni_wheel.dae"/>
       </geometry>
@@ -47,7 +47,7 @@
       <xacro:insert_block name="joint_parent" />
       <child link="omni_${suffix}_link" />
       <axis xyz="0 0 1" rpy="0 0 0" />
-      <limit effort="30" velocity="3.0" />
+      <limit effort="30" velocity="25.0" />
     </joint>
     
   </xacro:macro>

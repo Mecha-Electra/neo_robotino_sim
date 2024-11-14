@@ -71,6 +71,12 @@ def generate_launch_description():
             output='screen',
             parameters=robot_state_publisher_parameters,
             arguments=[])
+    
+    joint_state_broadcaster_spawner = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=['joint_state_broadcaster'],
+    )
 
     # Bridge
     bridge = Node(
@@ -93,9 +99,20 @@ def generate_launch_description():
     )
 
     #controle
-    load_joint_trajectory_controller = ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active', 'velocity_controller'],
-        output='screen'
+    robot_controllers = os.path.join(
+            pkg_neo_robotino_sim,
+            'config',
+            'motor_velocity_controller.yaml',
+    )
+
+    velocity_controller_spawner = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=[
+            'velocity_controller',
+            '--param-file',
+            robot_controllers,
+            ],
     )
 
     return LaunchDescription([
@@ -107,7 +124,13 @@ def generate_launch_description():
         RegisterEventHandler(
             event_handler=OnProcessExit(
                 target_action=spawn,
-                on_exit=[rviz, load_joint_trajectory_controller, bridge],
+                on_exit=[rviz, joint_state_broadcaster_spawner, bridge],
+            )
+        ),
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=joint_state_broadcaster_spawner,
+                on_exit=[velocity_controller_spawner],
             )
         ),
         spawn
