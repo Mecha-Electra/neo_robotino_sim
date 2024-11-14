@@ -41,7 +41,7 @@ public:
 private:
 
     struct LocPose {
-        double x = 0, y = 0, theta = 0;
+        double x, y, theta;
     } pose_local_;
     void vel_callback(const geometry_msgs::msg::Twist msg)
     {
@@ -75,9 +75,9 @@ private:
 
         rclcpp::Time msg_time(msg->header.stamp);
 
-        last_wheel_time_ = msg_time;
-
         float dt = (msg_time - last_wheel_time_).seconds();
+
+        last_wheel_time_ = msg_time;
 
         integrateByRungeKutta(vx, vy, omega, dt);
 
@@ -102,6 +102,26 @@ private:
         odom_msg.twist.twist.linear.y = vy;
         odom_msg.twist.twist.angular.z = omega;
 
+        // Exemplo simples com variância/erro arbitrário
+        for (int i = 0; i < 36; ++i) {
+            odom_msg.pose.covariance[i] = 0.0;  // Inicializa com zeros
+        }
+
+        // Definindo variâncias e covariâncias
+        odom_msg.pose.covariance[0] = 0.01;  // Variância em x
+        odom_msg.pose.covariance[7] = 0.01;  // Variância em y
+        odom_msg.pose.covariance[14] = 0.01; // Variância em θ
+
+        // Covariâncias entre as variáveis
+        odom_msg.pose.covariance[1] = 0.001;  // Covariância entre x e y
+        odom_msg.pose.covariance[6] = 0.001;  // Covariância entre x e θ
+        odom_msg.pose.covariance[13] = 0.001; // Covariância entre y e θ
+
+        // Covariância entre as velocidades (simples exemplo)
+        odom_msg.twist.covariance[0] = 0.1;  // Variância em vx
+        odom_msg.twist.covariance[7] = 0.1;  // Variância em vy
+        odom_msg.twist.covariance[14] = 0.1; // Variância em ω
+
         // Publica a mensagem de odometria
         odom_publisher_->publish(odom_msg);
 
@@ -111,7 +131,7 @@ private:
         double theta_bar = pose_local_.theta + (wz*dt_ / 2.0f);
         pose_local_.x = pose_local_.x + (vx * cos(theta_bar) - vy * sin(theta_bar)) * dt_;
         pose_local_.y = pose_local_.y + (vx * sin(theta_bar) + vy * cos(theta_bar)) * dt_;
-        pose_local_.theta += + pose_local_.theta*dt_;
+        pose_local_.theta += wz*dt_;
     }
 
     rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_subscription_;
