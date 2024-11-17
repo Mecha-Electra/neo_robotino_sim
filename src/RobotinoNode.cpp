@@ -8,6 +8,8 @@
 #include "nav_msgs/msg/odometry.hpp"
 
 #include <tf2/LinearMath/Quaternion.h>
+#include <tf2_ros/transform_broadcaster.h>
+#include <geometry_msgs/msg/transform_stamped.hpp>
 
 #include "OmniDriveSystem.hpp"
 #include "DriveLayout.hpp"
@@ -33,6 +35,7 @@ public:
 
         wheel_publisher_ = this->create_publisher<std_msgs::msg::Float64MultiArray>("/velocity_controller/commands", 10);
         odom_publisher_ = this->create_publisher<nav_msgs::msg::Odometry>("/odom", 10);
+        tf_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(this);
 
         motorEN = true;
         last_wheel_time_ = get_clock()->now();
@@ -82,9 +85,20 @@ private:
         integrateByRungeKutta(vx, vy, omega, dt);
 
         nav_msgs::msg::Odometry odom_msg;
-        odom_msg.header.stamp = this->get_clock()->now();
+        geometry_msgs::msg::TransformStamped transform_stamped;
+        //odom_msg.header.stamp = this->get_clock()->now();
+        odom_msg.header.stamp = msg->header.stamp;
         odom_msg.header.frame_id = "odom";
         odom_msg.child_frame_id = "base_link";
+
+        transform_stamped.header.stamp = msg->header.stamp;
+        transform_stamped.header.frame_id = "odom";        // Frame pai
+        transform_stamped.child_frame_id = "base_link";    // Frame filho
+
+        transform_stamped.transform.translation.x = pose_local_.x;  // Exemplo de deslocamento em X
+        transform_stamped.transform.translation.y = pose_local_.y;  // Exemplo de deslocamento em Y
+        transform_stamped.transform.translation.z = 0.0;  // Exemplo de deslocamento em Z
+
 
         // Preenche a pose na mensagem de odometria
         odom_msg.pose.pose.position.x = pose_local_.x;
@@ -96,6 +110,11 @@ private:
         odom_msg.pose.pose.orientation.y = q.y();
         odom_msg.pose.pose.orientation.z = q.z();
         odom_msg.pose.pose.orientation.w = q.w();
+
+        transform_stamped.transform.rotation.x = q.x();
+        transform_stamped.transform.rotation.y = q.y();
+        transform_stamped.transform.rotation.z = q.z();
+        transform_stamped.transform.rotation.w = q.w();
 
         // Preenche a velocidade na mensagem de odometria
         odom_msg.twist.twist.linear.x = vx;
@@ -124,6 +143,7 @@ private:
 
         // Publica a mensagem de odometria
         odom_publisher_->publish(odom_msg);
+        tf_broadcaster_->sendTransform(transform_stamped);
 
     }
 
@@ -139,7 +159,8 @@ private:
     rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr wheel_publisher_;
     rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr odom_publisher_;
     rclcpp::Time last_wheel_time_;
-
+    std::shared_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
+    
     bool motorEN = false;
     OmniDriveSystem _omni;
     std::vector<std::string> joint_names_ = {"omni_left_joint", "omni_back_joint", "omni_right_joint"};

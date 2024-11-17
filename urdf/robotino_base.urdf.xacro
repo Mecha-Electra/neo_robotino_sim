@@ -13,6 +13,7 @@
     <xacro:property name="height" value="0.150" /> <!-- Link 2 -->
     <xacro:property name="wheel_radius" value="0.0375" /> <!-- Link 1 -->
     <xacro:property name="wheel_height" value="0.06" /> <!-- Link 2 -->
+    <xacro:property name="wheel_clearance" value="0.02" /> <!-- Link 2 -->
 
     <!-- Base Link -->
     <link name="base_link">
@@ -71,6 +72,16 @@
         </inertial>
     </link>
 
+    <link name="base_footprint">
+        
+    </link>
+
+    <joint name="footprint_joint" type="fixed">
+        <parent link="base_link" />
+        <child link="base_footprint" />
+        <origin xyz="0 0 ${(-height/2)+(-wheel_radius)+(wheel_clearance)}" rpy="0 0 0" />
+    </joint>
+
     <joint name="base_to_structure" type="fixed">
         <parent link="base_link" />
         <child link="structure_link" />
@@ -83,17 +94,17 @@
     </joint>
 
     <xacro:omni_wheel suffix="back" radius="${wheel_radius}" height="${wheel_height}" mass="0.2">
-        <origin xyz="-0.13 0 ${(-height/2)+(wheel_radius)-0.02}" rpy="${PI/2} 0 ${-PI/2}" />
+        <origin xyz="-0.13 0 ${(-height/2)+(wheel_radius)-(wheel_clearance)}" rpy="${PI/2} 0 ${-PI/2}" />
         <parent link="structure_link" />
     </xacro:omni_wheel>
 
     <xacro:omni_wheel suffix="right" radius="${wheel_radius}" height="${wheel_height}" mass="0.2">
-        <origin xyz="0.065 -0.11 ${(-height/2)+(wheel_radius)-0.02}" rpy="${PI/2} 0 ${-PI/3 + PI/2}" />
+        <origin xyz="0.065 -0.11 ${(-height/2)+(wheel_radius)-(wheel_clearance)}" rpy="${PI/2} 0 ${-PI/3 + PI/2}" />
         <parent link="structure_link" />
     </xacro:omni_wheel>
 
     <xacro:omni_wheel suffix="left" radius="${wheel_radius}" height="${wheel_height}" mass="0.2">
-        <origin xyz="0.065 0.11 ${(-height/2)+(wheel_radius)-0.02}" rpy="${PI/2} 0 ${PI/3 + PI/2}" />
+        <origin xyz="0.065 0.11 ${(-height/2)+(wheel_radius)-(wheel_clearance)}" rpy="${PI/2} 0 ${PI/3 + PI/2}" />
         <parent link="structure_link" />
     </xacro:omni_wheel>
 

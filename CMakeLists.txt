@@ -17,18 +17,20 @@ find_package(geometry_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(tf2 REQUIRED)
+find_package(tf2_ros REQUIRED)
 
-add_executable(main src/RobotinoNode.cpp src/OmniDriveSystem.cpp)
-ament_target_dependencies(main 
+add_executable(robotino_node src/RobotinoNode.cpp src/OmniDriveSystem.cpp)
+ament_target_dependencies(robotino_node 
   rclcpp
   std_msgs
   geometry_msgs
   sensor_msgs
   nav_msgs
   tf2
+  tf2_ros
 )
 install(TARGETS
-  main
+  robotino_node
   DESTINATION lib/${PROJECT_NAME}
 )
 
