@@ -31,6 +31,7 @@
     </light>
 
     <model name="ground_plane">
+      <pose>0 0 -0.02 0 0 0</pose>
       <static>true</static>
       <link name="link">
         <collision name="collision">
@@ -56,5 +57,8 @@
         </visual>
       </link>
     </model>
+    <include>
+      <uri>model://neo_robotino_sim/worlds/Ionic_Interior</uri>
+    </include>
   </world>
 </sdf>

@@ -3,7 +3,7 @@ import os
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, RegisterEventHandler, DeclareLaunchArgument, ExecuteProcess, SetEnvironmentVariable
+from launch.actions import IncludeLaunchDescription, RegisterEventHandler, DeclareLaunchArgument, TimerAction, SetEnvironmentVariable
 from launch.event_handlers import OnProcessExit
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
@@ -25,7 +25,7 @@ def generate_launch_description():
             os.path.join(pkg_ros_gz_sim, 'launch', 'gz_sim.launch.py')),
         launch_arguments={
             'gz_args': [
-                '-r ', os.path.join(pkg_neo_robotino_sim, 'worlds', 'simple.sdf')
+                '-r ', os.path.join(pkg_neo_robotino_sim, 'worlds', 'simple.sdf'),
             ]
         }.items(),
     )
@@ -107,16 +107,21 @@ def generate_launch_description():
         arguments=[],
     )
 
+    delayed_joint_state_broad = TimerAction(
+        period=5.0,  # Tempo de delay em segundos
+        actions=[joint_state_broadcaster_spawner]  # Nenhuma ação executada durante o delay
+    )
+
     return LaunchDescription([
         set_res_path,
-        robot_state_publisher,
         gz_sim,
+        robot_state_publisher,
         DeclareLaunchArgument('rviz', default_value='true',
                               description='Open RViz.'),
         RegisterEventHandler(
             event_handler=OnProcessExit(
                 target_action=spawn,
-                on_exit=[rviz, joint_state_broadcaster_spawner, bridge, robotino_node],
+                on_exit=[rviz, delayed_joint_state_broad, bridge, robotino_node],
             )
         ),
         RegisterEventHandler(
@@ -125,5 +130,8 @@ def generate_launch_description():
                 on_exit=[velocity_controller_spawner],
             )
         ),
-        spawn
+        TimerAction(
+            period=10.0,  # Tempo de delay em segundos
+            actions=[spawn]  # Nenhuma ação executada durante o delay
+        )
     ])
