@@ -39,24 +39,13 @@ def generate_launch_description():
         condition=IfCondition(LaunchConfiguration('rviz'))
     )
 
-    # Robot description urdf parsing
-    #using the command to avoid relative path errors
-    robot_desc = Command(['xacro ', os.path.join(pkg_neo_robotino_sim, 'urdf', 'robotino_base.urdf.xacro')])
-
-    # Robot state publisher
-    robot_state_publisher_parameters=[
-        #this following line is for loading without misinterpreting values as another file
-        {'robot_description': launch_ros.descriptions.ParameterValue(robot_desc, value_type=str)},
-        {'use_sim_time': True}
-        ]
-
-    robot_state_publisher = Node(
-            package='robot_state_publisher',
-            executable='robot_state_publisher',
-            name='robot_state_publisher',
-            output='screen',
-            parameters=robot_state_publisher_parameters,
-            arguments=[])
+    robot_description = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_neo_robotino_sim, 'launch', 'robot_description.launch.py')),
+        launch_arguments={
+            'use_sim_time': 'true'
+        }.items(),
+    )
     
     joint_state_broadcaster_spawner = Node(
         package='controller_manager',
@@ -115,7 +104,7 @@ def generate_launch_description():
     return LaunchDescription([
         set_res_path,
         gz_sim,
-        robot_state_publisher,
+        robot_description,
         DeclareLaunchArgument('rviz', default_value='true',
                               description='Open RViz.'),
         RegisterEventHandler(
