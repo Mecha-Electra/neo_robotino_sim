@@ -110,7 +110,7 @@
 
     <ros2_control name="IgnitionSystem" type="system">
         <hardware>
-            <plugin>ign_ros2_control/IgnitionSystem</plugin>
+            <plugin>gz_ros2_control/GazeboSimSystem</plugin>
         </hardware>
         <joint name="omni_back_joint">
             <command_interface name="velocity">
