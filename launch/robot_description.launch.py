@@ -24,7 +24,7 @@ def generate_launch_description():
     )
 
     # Robot description urdf parsing
-    #using the command to avoid relative path errors
+    # using the command to avoid relative path errors
     robot_desc = Command(['xacro ', os.path.join(pkg_neo_robotino_sim, 'urdf', 'robotino_base.urdf.xacro')])
 
     # Robot state publisher
@@ -32,7 +32,7 @@ def generate_launch_description():
         #this following line is for loading without misinterpreting values as another file
         {'robot_description': launch_ros.descriptions.ParameterValue(robot_desc, value_type=str)},
         {'use_sim_time': LaunchConfiguration('use_sim_time')}
-        ]
+    ]
 
     robot_state_publisher = Node(
             package='robot_state_publisher',

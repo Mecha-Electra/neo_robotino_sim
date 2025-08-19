@@ -58,7 +58,25 @@ def generate_launch_description():
         package='ros_gz_bridge',
         executable='parameter_bridge',
         arguments=['lidar@sensor_msgs/msg/LaserScan@gz.msgs.LaserScan',
-                   '/lidar/points@sensor_msgs/msg/PointCloud2@gz.msgs.PointCloudPacked'],
+                   '/lidar/points@sensor_msgs/msg/PointCloud2@gz.msgs.PointCloudPacked',
+                   'dist_sensor_0@sensor_msgs/msg/LaserScan@gz.msgs.LaserScan',
+                   '/dist_sensor_0/points@sensor_msgs/msg/PointCloud2@gz.msgs.PointCloudPacked',
+                   'dist_sensor_1@sensor_msgs/msg/LaserScan@gz.msgs.LaserScan',
+                   '/dist_sensor_1/points@sensor_msgs/msg/PointCloud2@gz.msgs.PointCloudPacked',
+                   'dist_sensor_2@sensor_msgs/msg/LaserScan@gz.msgs.LaserScan',
+                   '/dist_sensor_2/points@sensor_msgs/msg/PointCloud2@gz.msgs.PointCloudPacked',
+                   'dist_sensor_3@sensor_msgs/msg/LaserScan@gz.msgs.LaserScan',
+                   '/dist_sensor_3/points@sensor_msgs/msg/PointCloud2@gz.msgs.PointCloudPacked',
+                   'dist_sensor_4@sensor_msgs/msg/LaserScan@gz.msgs.LaserScan',
+                   '/dist_sensor_4/points@sensor_msgs/msg/PointCloud2@gz.msgs.PointCloudPacked',
+                   'dist_sensor_5@sensor_msgs/msg/LaserScan@gz.msgs.LaserScan',
+                   '/dist_sensor_5/points@sensor_msgs/msg/PointCloud2@gz.msgs.PointCloudPacked',
+                   'dist_sensor_6@sensor_msgs/msg/LaserScan@gz.msgs.LaserScan',
+                   '/dist_sensor_6/points@sensor_msgs/msg/PointCloud2@gz.msgs.PointCloudPacked',
+                   'dist_sensor_7@sensor_msgs/msg/LaserScan@gz.msgs.LaserScan',
+                   '/dist_sensor_7/points@sensor_msgs/msg/PointCloud2@gz.msgs.PointCloudPacked',
+                   'dist_sensor_8@sensor_msgs/msg/LaserScan@gz.msgs.LaserScan',
+                   '/dist_sensor_8/points@sensor_msgs/msg/PointCloud2@gz.msgs.PointCloudPacked'],
         output='screen'
     )
 
@@ -97,7 +115,7 @@ def generate_launch_description():
     )
 
     delayed_joint_state_broad = TimerAction(
-        period=5.0,  # Tempo de delay em segundos
+        period=20.0,  # Tempo de delay em segundos
         actions=[joint_state_broadcaster_spawner]  # Nenhuma ação executada durante o delay
     )
 
@@ -120,7 +138,7 @@ def generate_launch_description():
             )
         ),
         TimerAction(
-            period=10.0,  # Tempo de delay em segundos
+            period=30.0,  # Tempo de delay em segundos
             actions=[spawn]  # Nenhuma ação executada durante o delay
         )
     ])

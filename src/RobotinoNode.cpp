@@ -51,8 +51,13 @@ private:
         if(motorEN){
             auto message = std_msgs::msg::Float64MultiArray();
             float vels[] = {0,0,0,0};
-            _omni.projectVelocity(vels, maxRPM, 
-                msg.linear.x, msg.linear.y, msg.angular.z);
+
+            double vx = -msg.linear.x;
+            double vy = msg.linear.y;
+            double wz = msg.angular.z;
+
+
+            _omni.projectVelocity(vels, maxRPM, vx, vy, wz);
             
             message.data = {-vels[0], -vels[1], -vels[2]};
 
@@ -72,9 +77,9 @@ private:
         double m3 = -joint_velocity_map[joint_names_[2]];
 
         
-
         float vx, vy, omega;
         _omni.unprojectVelocity(&vx, &vy, &omega, m1, m2, m3, 0);
+        vx = -vx; // Inverte o sinal de vx para manter a consistência com o comando cmd_vel
 
         rclcpp::Time msg_time(msg->header.stamp);
 
@@ -153,6 +158,14 @@ private:
         pose_local_.y = pose_local_.y + (vx * sin(theta_bar) + vy * cos(theta_bar)) * dt_;
         pose_local_.theta += wz*dt_;
     }
+
+    void rotate_vel(float vx, float vy, float angle_rad) {
+        double x_new = cos(angle_rad) * vx - sin(angle_rad) * vy;
+        double y_new = sin(angle_rad) * vx + cos(angle_rad) * vy;
+        vx = x_new;
+        vy = y_new;
+    }
+
 
     rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_subscription_;
     rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr joint_subscription_;

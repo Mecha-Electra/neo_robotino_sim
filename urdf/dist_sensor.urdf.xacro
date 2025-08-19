@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="sens_joint_origin" params="angle radius">
+    <!-- seno e cosseno já podem ser usados diretamente nas expressões -->
+    <origin xyz="${cos(angle)*radius} ${sin(angle)*radius} -0.0685"
+            rpy="0 0 ${angle}" />
+  </xacro:macro>
+
+  <xacro:macro name="dist_sensor" params="suffix mass robot_radius *joint_parent">   
+
+    <xacro:property name="PI" value="3.1415926535897931" />
+    <xacro:property name="forty_degrees" value="0.698132" />
+
+    <link name="dist_sensor_${suffix}_link">
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+            <box size="0.0295 0.0135 0.013" />
+        </geometry>
+      </collision>
+
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+            <box size="0.0135 0.0295 0.013" />
+        </geometry>
+      </visual>
+
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <mass value="${mass}" />
+        <inertia
+          ixx="${(mass*(0.013**2 + 0.0135**2))/12}" ixy="0.0" ixz="0.0"
+          iyy="${(mass*(0.0295**2 + 0.0135**2))/12}" iyz="0.0"
+          izz="${(mass*(0.0295**2 + 0.013**2))/12}" />
+      </inertial>
+    </link>
+
+    <!-- precisa de parent e origin -->
+    <joint name="dist_sensor_${suffix}_joint" type="fixed">
+      <xacro:insert_block name="joint_parent" />
+      <child link="dist_sensor_${suffix}_link" />
+      <xacro:sens_joint_origin angle="${suffix*forty_degrees}" radius="${robot_radius}"/>
+    </joint>
+    
+  </xacro:macro>
+</robot>

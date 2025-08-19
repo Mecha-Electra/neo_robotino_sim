@@ -23,6 +23,8 @@
         </plugin>
     </gazebo>
 
+
+
     <!-- configs do LIDAR -->
     <gazebo reference="lidar_link">
         <sensor name='gpu_lidar' type='gpu_lidar'>
@@ -69,5 +71,57 @@
             <always_on>1</always_on>
         </sensor>
     </gazebo>
+
+    <xacro:macro name="add_sensor_plugins" params="suffix">    
+        <gazebo reference="dist_sensor_${suffix}_link">
+            <sensor name='distance_sensor_${suffix}' type='gpu_lidar'>
+                
+                <topic>/dist_sensor_${suffix} </topic>
+                <frame_id>dist_sensor_${suffix}_link</frame_id>
+                <ignition_frame_id>dist_sensor_${suffix}_link</ignition_frame_id>
+
+                <update_rate>10</update_rate>
+                <lidar>
+                    <scan>
+                        <horizontal>
+                            <samples>10</samples>
+                            <resolution>1</resolution>
+                            <min_angle>-0.05</min_angle>
+                            <max_angle>0.05</max_angle>
+                        </horizontal>
+                        <vertical>
+                            <samples>1</samples>
+                            <resolution>0.01</resolution>
+                            <min_angle>0</min_angle>
+                            <max_angle>0</max_angle>
+                        </vertical>
+                    </scan>
+                    <range>
+                        <min>0.04</min>
+                        <max>0.01</max>
+                        <resolution>0.01</resolution>
+                    </range>
+                    <noise>
+                        <type>gaussian</type>
+                        <mean>0</mean>
+                        <stddev>0.01</stddev>
+                    </noise>
+                </lidar>
+                <always_on>1</always_on>
+            </sensor>
+        </gazebo>
+    </xacro:macro>
+
+    <!-- chama macro para criar os plugins -->
+    <xacro:add_sensor_plugins suffix="0"/>
+    <xacro:add_sensor_plugins suffix="1"/>
+    <xacro:add_sensor_plugins suffix="2"/>
+    <xacro:add_sensor_plugins suffix="3"/>
+    <xacro:add_sensor_plugins suffix="4"/>
+    <xacro:add_sensor_plugins suffix="5"/>
+    <xacro:add_sensor_plugins suffix="6"/>
+    <xacro:add_sensor_plugins suffix="7"/>
+    <xacro:add_sensor_plugins suffix="8"/>
+    
 
 </robot>
