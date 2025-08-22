@@ -123,7 +123,7 @@ def generate_launch_description():
         set_res_path,
         gz_sim,
         robot_description,
-        DeclareLaunchArgument('rviz', default_value='true',
+        DeclareLaunchArgument('rviz', default_value='false',
                               description='Open RViz.'),
         RegisterEventHandler(
             event_handler=OnProcessExit(
