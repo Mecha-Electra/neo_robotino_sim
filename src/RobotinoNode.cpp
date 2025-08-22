@@ -53,7 +53,7 @@ private:
             float vels[] = {0,0,0,0};
 
             double vx = -msg.linear.x;
-            double vy = msg.linear.y;
+            double vy = -msg.linear.y;
             double wz = msg.angular.z;
 
 
@@ -80,6 +80,7 @@ private:
         float vx, vy, omega;
         _omni.unprojectVelocity(&vx, &vy, &omega, m1, m2, m3, 0);
         vx = -vx; // Inverte o sinal de vx para manter a consistência com o comando cmd_vel
+        vy = -vy; // Inverte o sinal de vy para manter a consistência com o comando cmd_vel
 
         rclcpp::Time msg_time(msg->header.stamp);
 
